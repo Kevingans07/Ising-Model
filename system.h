@@ -10,8 +10,8 @@ class IsingSystem {
     private:
         int N; // grid size (NxN)
         double beta; // beta is the inverse temperature
-        //std::vector<int> spins; // represents the spin states (either +1 or -1) for 1D
-        std::vector<std::vector<int>> spins; // this for 2D grid that has 100 rows and each contains 100 spins
+        std::vector<int> spins; // represents the spin states (either +1 or -1) for 1D
+        //std::vector<std::vector<int>> spins; // this for 2D grid that has 100 rows and each contains 100 spins
 
     
     public:

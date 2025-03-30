@@ -18,10 +18,9 @@ IsingSystem::IsingSystem(int num_atoms, double beta) {
 void IsingSystem::initialize_spins() {
     srand(time(0)); // Seed random number generator
     for (int i = 0; i < N; i++) {
-        for (int j=0; j< N; j++){
-            spins[i][j] = (rand() % 2 == 0) ? 1 : -1; // If rand() % 2 == 0 is true, assigns 1 to spins[i].
+            spins[i] = (rand() % 2 == 0) ? 1 : -1; // If rand() % 2 == 0 is true, assigns 1 to spins[i].
                                               // Otherwise, assigns -1 to spins[i].
-        }
+        
     }
 }
 
@@ -29,17 +28,8 @@ void IsingSystem::initialize_spins() {
 double IsingSystem::compute_energy() const {
     double energy = 0.0; // stores the total energy of the system
     for (int i = 0; i < N - 1; i++) {
-        for (int j = 0; j < N - 1; j++){
-            int spin = spins[i][j];
-
-            // Periodic boundary conditions (PBC)
-            int right = spins[i][(j + 1) % N];
-            int down  = spins[(i + 1) % N][j];
-
             // Interaction energy with right and bottom neighbors
-            energy += -spin * (right + down);
-
-        }
+            energy += -1.0 *spins[i]*spins[i+1];
     }
     return energy / (N*N); // normalising by the number of spins
 }
@@ -48,9 +38,7 @@ double IsingSystem::compute_energy() const {
 double IsingSystem::compute_magnetization() const {
     double magnetization = 0.0; // stores the total magnetisation of the system
     for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++){
-            magnetization += spins[i][j];
-        }
+        magnetization += spins[i];
     }
     return magnetization/ (N*N); // normalising by the number of spins;
 }
@@ -59,28 +47,28 @@ double IsingSystem::compute_magnetization() const {
 void IsingSystem::monte_carlo_step() {
     for (int i = 0; i < N; i++) { // Loop N*N times for a full Monte Carlo sweep
 
-        int row = rand() % N; // Pick a random row
-        int column = rand() % N; // Pick a random column
+        int index = rand() % N; // Pick a random row (for spin)
+        // int column = rand() % N; // Pick a random column
 
-        int spin_old = spins[row][column];
+        int spin_old = spins[index];
         int spin_new = -spin_old; // Flip spin
 
         // Compute energy difference ΔE = 2 * spin_old * sum(neighbors)
         
         // This is for 1D
-        // double deltaE = 0;
-        // if (index > 0) deltaE += 2 * spin_old * spins[index - 1]; // Left neighbor
-        // if (index < N - 1) deltaE += 2 * spin_old * spins[index + 1]; // Right neighbor
+        double deltaE = 0;
+        if (index > 0) deltaE += 2 * spin_old * spins[index - 1]; // Left neighbor
+        if (index < N - 1) deltaE += 2 * spin_old * spins[index + 1]; // Right neighbor
 
         //This is for 2D
-        int deltaE = 2 * spin_old * (
-            spins[(row + 1) % N][column] + spins[(row - 1 + column) % N][column] + // Top & Bottom
-            spins[row][(row + 1) % N] + spins[row][(column - 1 + N) % N]   // Left & Right
-        );
+        // int deltaE = 2 * spin_old * (
+        //     spins[(row + 1) % N][column] + spins[(row - 1 + column) % N][column] + // Top & Bottom
+        //     spins[row][(row + 1) % N] + spins[row][(column - 1 + N) % N]   // Left & Right
+        // );
 
         // Metropolis acceptance criterion
         if (deltaE < 0 || exp(-deltaE * beta) > (double)rand() / RAND_MAX) {
-            spins[row][column] = spin_new; // Accept flip
+            spins[index] = spin_new; // Accept flip
         }
     }
 }
