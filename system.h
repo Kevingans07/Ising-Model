@@ -1,5 +1,6 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
+#include <string>
 
 // This is the Header file -> for interface
 //for the spins, energy calculations, and monte carlo updates
@@ -24,6 +25,9 @@ class IsingSystem {
 
         void simulate(int mc_steps); // Run Monte Carlo simulation
         void print_results(double avg_energy, double avg_magnetization) const; // Print final energy and magnetization
+
+        
+        void save_spins(const std::string& filename);
 
 };
 

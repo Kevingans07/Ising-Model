@@ -1,6 +1,7 @@
 // This is the cpp file -> for implementation
 // to implement the ising model
 #include "system.h"
+#include <fstream> // Include for file output
 #include <iostream>
 #include <cstdlib>  // For rand() -> to return random number between 0 and 1
 #include <cmath>    // For exp()
@@ -10,7 +11,12 @@
 IsingSystem::IsingSystem(int num_atoms, double beta) {
     N = num_atoms;
     this->beta =beta; // to store beta
-    spins.resize(N);
+    //spins.resize(N); // this is for 1d
+
+      for (int i = 0; i < N; i++) {
+        spins[i].resize(N);  
+    }
+
     initialize_spins();
 }
 
@@ -74,8 +80,8 @@ void IsingSystem::monte_carlo_step() {
 
         //This is for 2D
         int deltaE = 2 * spin_old * (
-            spins[(row + 1) % N][column] + spins[(row - 1 + column) % N][column] + // Top & Bottom
-            spins[row][(row + 1) % N] + spins[row][(column - 1 + N) % N]   // Left & Right
+            spins[(row + 1) % N][column] + spins[(row - 1 + N) % N][column] + // Top & Bottom
+            spins[row][(column + 1) % N] + spins[row][(column - 1 + N) % N]   // Left & Right
         );
 
         // Metropolis acceptance criterion
@@ -85,11 +91,49 @@ void IsingSystem::monte_carlo_step() {
     }
 }
 
+void IsingSystem::save_spins(const std::string& filename) {
+    std::ofstream spinFile(filename, std::ios::app); // open file in append mode
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            spinFile << spins[i][j] << " ";
+        }
+        spinFile << "\n"; // new line for each row
+    }
+    spinFile << "END\n"; // mark the end of configuration
+    spinFile.close();
+}
+
+
+
 // To Run Monte Carlo Simulation
 void IsingSystem::simulate(int mc_steps){
+    std::ofstream spinFile("ising_spins.txt", std::ios::trunc); // to create file
+    spinFile.close(); // Close file
+
     for(int step=0; step<mc_steps; step++){
-        monte_carlo_step(); // performing MC update
+        //monte_carlo_step(); // performing MC update
+
+        // Save lattice configuration every 100 steps
+        if (step % 100 == 0) {
+            // std::ofstream spinFile("ising_spins.txt", std::ios::app); // Append mode
+            // if (!spinFile) {
+            //     std::cerr << "Error: Could not open ising_spins.txt" << std::endl;
+            //     return;
+            // }
+
+            // for (int i = 0; i < N; i++) {
+            //     for (int j = 0; j < N; j++) {
+            //         spinFile << spins[i][j] << " ";
+            //     }
+            //     spinFile << "\n"; // New row
+            // }
+            // spinFile << "END\n"; // Mark end of one configuration
+            std::cout << "Step " << step << ": Saving spin configuration" << std::endl; // Debug print
+            save_spins("ising_spins.txt");
+        }
     }
+    //spinFile.close(); // Close file
 }
 
 // Print final energy and magnetization
@@ -99,3 +143,4 @@ void IsingSystem::print_results(double avg_energy, double avg_magnetization) con
               << " | Final Energy: " << avg_energy 
               << " | Final Magnetization: " << avg_magnetization << std::endl;
 }
+

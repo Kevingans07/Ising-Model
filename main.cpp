@@ -7,21 +7,24 @@
 int main() {
     int num_atoms =100; //number of atoms spinning in 1D ising model
     double temperature = 1.0; // Temperature
-    int mc_steps = 100000;  // Number of Monte Carlo steps
+    int mc_steps = 300000;  // Number of Monte Carlo steps
     int N =100; // 100x100 grids
 
     double betaMin =0.1;
-    double betaMax =1.5;
+    double betaMax =2.0;
     double betaStep =0.1;
 
     std::ofstream dataFile("ising_results.csv"); // Output file for results
     dataFile << "Beta,Average Energy,Average Magnetization\n"; // CSV header
 
 
-    for (double beta =betaMin; beta<= betaMax; beta += betaStep){
+    
+
+    for (double beta =betaMin; beta<= betaMax +1e-6 ; beta += betaStep){
         // Create Ising system object
         IsingSystem ising(num_atoms, beta);
 
+        std::cout << "Calling simulate() for Beta: " << beta << std::endl;
         // Run Monte Carlo Simulation
         ising.simulate(mc_steps);
 
@@ -34,6 +37,9 @@ int main() {
 
         // Write to CSV file
         dataFile << beta << "," << avg_energy << "," << avg_magnetization << "\n";
+
+        // 🔹 Save spins to file for visualization
+        ising.save_spins("ising_spins.txt");
 
     }
 
