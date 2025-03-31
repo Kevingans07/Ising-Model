@@ -109,10 +109,10 @@ void IsingSystem::save_spins(const std::string& filename) {
 // To Run Monte Carlo Simulation
 void IsingSystem::simulate(int mc_steps){
     std::ofstream spinFile("ising_spins.txt", std::ios::trunc); // to create file
-    spinFile.close(); // Close file
+    //spinFile.close(); // Close file
 
     for(int step=0; step<mc_steps; step++){
-        //monte_carlo_step(); // performing MC update
+        monte_carlo_step(); // performing MC update
 
         // Save lattice configuration every 100 steps
         if (step % 100 == 0) {
@@ -133,7 +133,7 @@ void IsingSystem::simulate(int mc_steps){
             save_spins("ising_spins.txt");
         }
     }
-    //spinFile.close(); // Close file
+    spinFile.close(); // Close file
 }
 
 // Print final energy and magnetization
