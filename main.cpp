@@ -1,6 +1,10 @@
-#include "system.h"
-#include <iostream>
-#include <fstream> // to create files, write to files, and read data from files
+#include "system.h" // include system header
+
+#include <iostream>  // For std::cout, std::cin
+#include <fstream>   // For file operations (std::ofstream)
+#include <cstdlib>   // For rand()
+#include <cmath>     // For exp() and other math functions
+#include <ctime>     // For seeding rand()
 
 
 
