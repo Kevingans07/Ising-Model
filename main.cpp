@@ -7,11 +7,11 @@
 int main() {
     int num_atoms =100; //number of atoms spinning in 1D ising model
     double temperature = 1.0; // Temperature
-    int mc_steps = 100000;  // Number of Monte Carlo steps
+    int mc_steps = 200000;  // Number of Monte Carlo steps
     int N =100; // 100x100 grids
 
     double betaMin =0.1;
-    double betaMax =1.5;
+    double betaMax =2.0;
     double betaStep =0.1;
 
     std::ofstream dataFile("ising_results.csv"); // Output file for results
